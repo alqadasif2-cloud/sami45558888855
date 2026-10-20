@@ -11,7 +11,9 @@ export interface PaymentMethodItem {
   type: 'crypto' | 'bank' | 'wallet' | 'other';
   network?: string;
   addressOrDetails?: string;
+  linkUrl?: string;
   instructions?: string;
+  qrCodeUrl?: string;
   isEnabled: boolean;
 }
 
@@ -30,6 +32,11 @@ export interface SubscriptionPlan {
   currency: string;
   shortDescription: string;
   fullDescription: string;
+  imageUrl?: string;
+  walletAddress?: string;
+  walletLink?: string;
+  depositNetwork?: string;
+  features?: string[];
   paymentMethods: PaymentMethodItem[];
   allowsInstallments: boolean;
   installmentMinimum: number;

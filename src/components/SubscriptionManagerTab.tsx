@@ -86,6 +86,7 @@ export const SubscriptionManagerTab: React.FC<SubscriptionManagerTabProps> = ({
   const [newPaymentName, setNewPaymentName] = useState('');
   const [newPaymentNetwork, setNewPaymentNetwork] = useState('');
   const [newPaymentAddress, setNewPaymentAddress] = useState('');
+  const [newPaymentLink, setNewPaymentLink] = useState('');
   const [newPaymentInstructions, setNewPaymentInstructions] = useState('');
 
   const showNotice = (text: string, isError = false) => {
@@ -316,6 +317,7 @@ export const SubscriptionManagerTab: React.FC<SubscriptionManagerTabProps> = ({
       type: 'crypto',
       network: newPaymentNetwork.trim() || undefined,
       addressOrDetails: newPaymentAddress.trim() || undefined,
+      linkUrl: newPaymentLink.trim() || undefined,
       instructions: newPaymentInstructions.trim() || undefined,
       isEnabled: true,
     };
@@ -327,6 +329,7 @@ export const SubscriptionManagerTab: React.FC<SubscriptionManagerTabProps> = ({
     setNewPaymentName('');
     setNewPaymentNetwork('');
     setNewPaymentAddress('');
+    setNewPaymentLink('');
     setNewPaymentInstructions('');
     setIsAddingPaymentMethod(false);
     showNotice(`تمت إضافة طريقة الدفع "${newMethod.name}".`);
@@ -727,6 +730,32 @@ export const SubscriptionManagerTab: React.FC<SubscriptionManagerTabProps> = ({
                   </p>
                 </div>
 
+                {/* Package Image or Logo URL */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">
+                    رابط صورة أو شعار الباقة (اختياري)
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="https://... أو مسار الشعار"
+                      value={draftPlan.imageUrl || ''}
+                      onChange={(e) => updateDraft({ imageUrl: e.target.value })}
+                      className="flex-1 bg-[#0e1627] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 outline-none font-mono dir-ltr text-right"
+                    />
+                    {draftPlan.imageUrl && (
+                      <img
+                        src={draftPlan.imageUrl}
+                        alt="شعار"
+                        className="w-9 h-9 rounded-xl object-cover border border-amber-400 shrink-0"
+                      />
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    يظهر الشعار في بطاقات الباقات وأعلى نافذة التفاصيل.
+                  </p>
+                </div>
+
                 {/* Price & Currency */}
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -850,7 +879,7 @@ export const SubscriptionManagerTab: React.FC<SubscriptionManagerTabProps> = ({
             </div>
           )}
 
-          {/* TAB 2: DESCRIPTIONS & NOTES */}
+          {/* TAB 2: DESCRIPTIONS, FEATURES & NOTES */}
           {activeEditorTab === 'descriptions' && (
             <div className="space-y-4">
               <div>
@@ -871,7 +900,7 @@ export const SubscriptionManagerTab: React.FC<SubscriptionManagerTabProps> = ({
                   الوصف التفصيلي (يظهر داخل نافذة تفاصيل الاشتراك)
                 </label>
                 <textarea
-                  rows={4}
+                  rows={3}
                   value={draftPlan.fullDescription}
                   onChange={(e) => updateDraft({ fullDescription: e.target.value })}
                   className="w-full bg-[#0e1627] border border-slate-700 rounded-xl p-3 text-xs text-white focus:border-amber-400 outline-none leading-relaxed"
@@ -879,16 +908,78 @@ export const SubscriptionManagerTab: React.FC<SubscriptionManagerTabProps> = ({
                 />
               </div>
 
+              {/* Package Features List Editor */}
+              <div className="p-4 rounded-2xl bg-[#0e172a] border border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <span>قائمة مزايا ومحتويات الباقة (Checklist)</span>
+                    </h4>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      بنود مميزة تظهر بجانب علامات صح ذهبية داخل نافذة تفاصيل الباقة.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = [...(draftPlan.features || []), ''];
+                      updateDraft({ features: updated });
+                    }}
+                    className="text-xs px-3 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold transition cursor-pointer"
+                  >
+                    + إضافة ميزة
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {(draftPlan.features && draftPlan.features.length > 0
+                    ? draftPlan.features
+                    : []
+                  ).map((feat, fIdx) => (
+                    <div key={fIdx} className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold flex items-center justify-center shrink-0">
+                        {fIdx + 1}
+                      </span>
+                      <input
+                        type="text"
+                        value={feat}
+                        onChange={(e) => {
+                          const updated = [...(draftPlan.features || [])];
+                          updated[fIdx] = e.target.value;
+                          updateDraft({ features: updated });
+                        }}
+                        placeholder="أدخل ميزة من مزايا الباقة..."
+                        className="flex-1 bg-[#0a101d] border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-amber-400"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = (draftPlan.features || []).filter((_, i) => i !== fIdx);
+                          updateDraft({ features: updated });
+                        }}
+                        className="text-rose-400 hover:text-rose-300 text-xs px-2 py-1 transition cursor-pointer"
+                      >
+                        حذف
+                      </button>
+                    </div>
+                  ))}
+                  {(!draftPlan.features || draftPlan.features.length === 0) && (
+                    <p className="text-xs text-slate-500 italic">لا توجد مزايا مخصصة حالياً. اضغط على «+ إضافة ميزة» لإضافة نقاط قوة الباقة.</p>
+                  )}
+                </div>
+              </div>
+
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1">
-                  ملاحظات وتوجيهات خاصة بالمالك Sami (اختيارية)
+                  توجيهات وملاحظات القائد Sami للمشتركين (تظهر في صندوق ذهبي مميز داخل التفاصيل)
                 </label>
-                <input
-                  type="text"
+                <textarea
+                  rows={2}
                   value={draftPlan.ownerNotes || ''}
                   onChange={(e) => updateDraft({ ownerNotes: e.target.value })}
-                  className="w-full bg-[#0e1627] border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300 focus:border-amber-400 outline-none"
-                  placeholder="ملاحظات تنظيمية داخلية..."
+                  className="w-full bg-[#0e1627] border border-slate-700 rounded-xl p-3 text-xs text-slate-200 focus:border-amber-400 outline-none leading-relaxed"
+                  placeholder="مثال: رحلة مدروسة ومحسوبة بهدف مضاعفة رأس المال تدريجياً والانضباط التام في الصفقات..."
                 />
               </div>
             </div>
@@ -897,6 +988,71 @@ export const SubscriptionManagerTab: React.FC<SubscriptionManagerTabProps> = ({
           {/* TAB 3: PAYMENT METHODS & INSTALLMENTS */}
           {activeEditorTab === 'payment' && (
             <div className="space-y-5">
+              {/* Primary Wallet & Transfer Configuration for the Plan */}
+              <div className="p-4 rounded-2xl bg-[#0c1424] border border-amber-500/30 space-y-3">
+                <h4 className="text-xs font-black text-amber-300 flex items-center gap-1.5">
+                  <CreditCard className="w-4 h-4 text-amber-400" />
+                  <span>بيانات المحفظة وشبكة التحويل الرئيسية للباقة</span>
+                </h4>
+                <p className="text-[11px] text-slate-300 leading-relaxed">
+                  هذه البيانات تظهر بشكل مباشر وبارز في نافذة تفاصيل الباقة للمستخدمين بجانب طرق الدفع المخصصة.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                      شبكة التحويل / الإيداع المعتمدة
+                    </label>
+                    <input
+                      type="text"
+                      value={draftPlan.depositNetwork || ''}
+                      onChange={(e) => updateDraft({ depositNetwork: e.target.value })}
+                      placeholder="مثال: Tron (USDT TRC20) أو BEP20"
+                      className="w-full bg-[#090f1e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-amber-300 font-mono outline-none focus:border-amber-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                      عنوان المحفظة أو الحساب الرئيسي
+                    </label>
+                    <input
+                      type="text"
+                      value={draftPlan.walletAddress || ''}
+                      onChange={(e) => updateDraft({ walletAddress: e.target.value })}
+                      placeholder="عنوان المحفظة (USDT / Binance Pay ID...)"
+                      className="w-full bg-[#090f1e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-amber-300 font-mono outline-none focus:border-amber-400 dir-ltr text-right"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                      رابط المحفظة أو الدفع المباشر (اختياري)
+                    </label>
+                    <input
+                      type="text"
+                      value={draftPlan.walletLink || ''}
+                      onChange={(e) => updateDraft({ walletLink: e.target.value })}
+                      placeholder="https://... رابط مستكشف البلوكتشين أو رابط بوابة الدفع"
+                      className="w-full bg-[#090f1e] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none focus:border-amber-400 dir-ltr text-right"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                      تعليمات الدفع والتحويل العامة
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={draftPlan.paymentInstructions || ''}
+                      onChange={(e) => updateDraft({ paymentInstructions: e.target.value })}
+                      placeholder="تعليمات وإرشادات واضحة للتحويل، مثل التأكد من الشبكة وإرسال لقطة الشاشة..."
+                      className="w-full bg-[#090f1e] border border-slate-700 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-amber-400 leading-relaxed"
+                    />
+                  </div>
+                </div>
+              </div>
+
               {/* Installments Option */}
               <div className="p-4 rounded-2xl bg-[#0e172a] border border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
@@ -979,6 +1135,13 @@ export const SubscriptionManagerTab: React.FC<SubscriptionManagerTabProps> = ({
                     />
                     <input
                       type="text"
+                      placeholder="رابط المحفظة المباشر أو صفحة الدفع (اختياري)"
+                      value={newPaymentLink}
+                      onChange={(e) => setNewPaymentLink(e.target.value)}
+                      className="w-full bg-[#0e1627] border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white font-mono outline-none dir-ltr text-right"
+                    />
+                    <input
+                      type="text"
                       placeholder="تعليمات الدفع للمشترك (اختياري)"
                       value={newPaymentInstructions}
                       onChange={(e) => setNewPaymentInstructions(e.target.value)}
@@ -1015,9 +1178,9 @@ export const SubscriptionManagerTab: React.FC<SubscriptionManagerTabProps> = ({
                           type="checkbox"
                           checked={method.isEnabled}
                           onChange={() => handleTogglePaymentMethod(method.id)}
-                          className="w-4 h-4 text-amber-500 rounded bg-slate-900 border-slate-700"
+                          className="w-4 h-4 text-amber-500 rounded bg-slate-900 border-slate-700 cursor-pointer"
                         />
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0 flex-1 space-y-0.5">
                           <div className="flex items-center gap-2">
                             <span className="text-xs font-bold text-white">{method.name}</span>
                             {method.network && (
@@ -1029,6 +1192,11 @@ export const SubscriptionManagerTab: React.FC<SubscriptionManagerTabProps> = ({
                           {method.addressOrDetails && (
                             <p className="text-[11px] text-amber-300/80 font-mono truncate dir-ltr text-right">
                               {method.addressOrDetails}
+                            </p>
+                          )}
+                          {method.linkUrl && (
+                            <p className="text-[10px] text-slate-400 font-mono truncate dir-ltr text-right">
+                              {method.linkUrl}
                             </p>
                           )}
                         </div>

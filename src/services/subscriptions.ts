@@ -23,24 +23,27 @@ const PLANS_COLLECTION = 'subscription_plans';
 const AUDIT_LOGS_COLLECTION = 'subscription_audit_logs';
 const CONSENTS_COLLECTION = 'subscription_consents';
 const LOCAL_PLANS_CACHE_KEY = 'sami_subscription_plans_cache_v2';
+const LOCAL_CONSENTS_CACHE_KEY = 'sami_user_consents_cache_v1';
 
 export const DEFAULT_PAYMENT_METHODS: PaymentMethodItem[] = [
+  {
+    id: 'usdt_trc20',
+    name: 'USDT (شبكة TRC20 - Tron)',
+    type: 'crypto',
+    network: 'Tron (USDT TRC20)',
+    addressOrDetails: 'TYAS89kLmnPqRstUvwXyz1234567890ABC',
+    linkUrl: 'https://tronscan.org/#/address/TYAS89kLmnPqRstUvwXyz1234567890ABC',
+    instructions: 'التحويل عبر شبكة TRC20 مع إرسال صورة التحويل عبر المحادثة الخاصة مع Sami.',
+    isEnabled: true,
+  },
   {
     id: 'usdt_bep20',
     name: 'USDT (شبكة BEP20 - BSC)',
     type: 'crypto',
     network: 'BNB Smart Chain (BEP20)',
     addressOrDetails: '0x1A2B3C4D5E6F7890123456789ABCDEF012345678',
+    linkUrl: 'https://bscscan.com/token/0x55d398326f99059ff775485246999027b3197955?a=0x1A2B3C4D5E6F7890123456789ABCDEF012345678',
     instructions: 'يرجى التأكد من اختيار شبكة BEP20 حصراً وإرسال إيصال التحويل مع هاش المعاملة.',
-    isEnabled: true,
-  },
-  {
-    id: 'usdt_trc20',
-    name: 'USDT (شبكة TRC20 - Tron)',
-    type: 'crypto',
-    network: 'Tron (TRC20)',
-    addressOrDetails: 'TYAS89kLmnPqRstUvwXyz1234567890ABC',
-    instructions: 'التحويل عبر شبكة TRC20 مع إرسال صورة التحويل عبر المحادثة الخاصة مع Sami.',
     isEnabled: true,
   },
   {
@@ -49,6 +52,7 @@ export const DEFAULT_PAYMENT_METHODS: PaymentMethodItem[] = [
     type: 'wallet',
     network: 'Binance Pay ID',
     addressOrDetails: 'Pay ID: 789123456',
+    linkUrl: 'https://app.binance.com/qr/cplnk?id=789123456',
     instructions: 'تحويل مباشر وسريع بدون رسوم شبكة عبر معرف بينانس باي الرسمي.',
     isEnabled: true,
   },
@@ -185,7 +189,16 @@ export const DEFAULT_SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     price: 150,
     currency: '$',
     shortDescription: 'رحلة تداول مدروسة ومحسوبة بهدف مضاعفة رأس المال تدريجياً والوصول إلى 3000$ بأمان.',
-    fullDescription: 'قناة تداول خاصة تهدف لمتابعة صفقات دقيقة ومدروسة مع خطة إدارة مخاطر صارمة بهدف الوصول بحساب التداول إلى 3000$. تتضمن تحديثات مستمرة وإرشادات لإدارة رأس المال وتحليلات فنية مباشرة.',
+    fullDescription: 'قناة تداول خاصة تهدف لمتابعة صفقات دقيقة ومدروسة مع خطة إدارة مخاطر صارمة بهدف الوصول بحساب التداول إلى 3000$. تتضمن تحديثات مستمرة وإرشادات لإدارة رأس المال وتحليلات فنية مباشرة مع القائد Sami.',
+    depositNetwork: 'Tron (USDT TRC20)',
+    walletAddress: 'TYAS89kLmnPqRstUvwXyz1234567890ABC',
+    walletLink: 'https://tronscan.org/#/address/TYAS89kLmnPqRstUvwXyz1234567890ABC',
+    features: [
+      'توصيات يومية دقيقة بهدف الوصول برأس المال إلى 3000$',
+      'تحديد مستويات وقف الخسارة ونقاط الدخول وجني الأرباح بدقة',
+      'إرشادات صارمة لإدارة رأس المال وتحديد حجم العقد المناسب',
+      'متابعة حية ومستمرة لحركة السوق مع Sami شخصياً',
+    ],
     paymentMethods: DEFAULT_PAYMENT_METHODS,
     allowsInstallments: true,
     installmentMinimum: 50,
@@ -220,8 +233,8 @@ export const DEFAULT_SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       },
     ],
     termsVersion: 1,
-    paymentInstructions: 'يمكنك التحويل عبر USDT (BEP20 أو TRC20) أو بينانس باي ثم إرسال لقطة الشاشة في الخاص.',
-    ownerNotes: 'رحلة متدرجة تناسب الحسابات الصغيرة والمتوسطة الباحثة عن الانضباط.',
+    paymentInstructions: 'يمكنك التحويل عبر USDT (شبكة TRC20 أو BEP20) أو بينانس باي المعتمد. يرجى إرسال لقطة الشاشة أو هاش المعاملة في الخاص مع Sami لتأكيد اشتراكك فوراً.',
+    ownerNotes: 'رحلة متدرجة ومدروسة تناسب الحسابات الصغيرة والمتوسطة الباحثة عن الانضباط وتحقيق هدف 3000$ بأمان.',
     publishedAt: Date.now(),
     updatedAt: Date.now(),
     updatedBy: 1,
@@ -233,6 +246,15 @@ export const DEFAULT_SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     currency: '$',
     shortDescription: 'المرحلة المتقدمة من رحلة النمو التراكمي للوصول برأس المال إلى 5000$ باستراتيجيات متقدمة.',
     fullDescription: 'قناة مخصصة للمتداولين الساعين لتحقيق نمو مستقر ومدروس نحو هدف 5000$. تركيز كامل على الصفقات المتأرجحة والموجهة وإدارة الصفقات الرابحة وحماية الأرباح المحققة مع Sami.',
+    depositNetwork: 'Tron (USDT TRC20)',
+    walletAddress: 'TYAS89kLmnPqRstUvwXyz1234567890ABC',
+    walletLink: 'https://tronscan.org/#/address/TYAS89kLmnPqRstUvwXyz1234567890ABC',
+    features: [
+      'استراتيجيات متقدمة لإدارة الصفقات الرابحة ونمو الحساب إلى 5000$',
+      'تحديد صفقات Swing متوسطة المدى بأعلى نسب نجاح',
+      'حماية الأرباح ونقل الوقف لنقطة الدخول عند تحقيق الأهداف',
+      'إمكانية الاستفادة من نظام الدفعات المرن (بدءاً من 100$)',
+    ],
     paymentMethods: DEFAULT_PAYMENT_METHODS,
     allowsInstallments: true,
     installmentMinimum: 100,
@@ -260,8 +282,8 @@ export const DEFAULT_SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       },
     ],
     termsVersion: 1,
-    paymentInstructions: 'التحويل عبر شبكة BEP20 أو TRC20 مع مشاركة إثبات الإيداع مع الإدارة فوراً.',
-    ownerNotes: 'استراتيجيات متوسطة المدى وصفقات دقيقة ذات نسبة نجاح عالية.',
+    paymentInstructions: 'التحويل متاح عبر شبكة TRC20 أو BEP20 أو بينانس باي. بعد التحويل يرجى مشاركة إيصال الإيداع مع Sami لتفعيل عضويتك.',
+    ownerNotes: 'استراتيجيات متوسطة المدى وصفقات دقيقة ذات نسبة نجاح عالية للوصول إلى هدف 5000$.',
     publishedAt: Date.now(),
     updatedAt: Date.now(),
     updatedBy: 1,
@@ -273,6 +295,15 @@ export const DEFAULT_SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     currency: '$',
     shortDescription: 'تحدي النخبة الاستثماري للوصول إلى 10,000$ بإشراف ومتابعة حثيثة من القائد Sami.',
     fullDescription: 'أعلى مستويات التحدي والتداول المنضبط. ترتكز القناة على استهداف تحركات سعرية كبرى بنسب عائد إلى مخاطرة مرتفعة مع تدريب على التحكم النفسي وإدارة الحسابات الكبيرة.',
+    depositNetwork: 'Tron (USDT TRC20)',
+    walletAddress: 'TYAS89kLmnPqRstUvwXyz1234567890ABC',
+    walletLink: 'https://tronscan.org/#/address/TYAS89kLmnPqRstUvwXyz1234567890ABC',
+    features: [
+      'تحدي النخبة الاستثماري الأكبر للوصول بالحساب إلى 10,000$',
+      'اقتناص موجات سعرية كبرى بنسب عائد إلى مخاطرة استثنائية (1:3 وأكثر)',
+      'توجيه نفسي مكثف للسيطرة على المشاعر وحفظ الأرباح الكبيرة',
+      'متابعة حصرية مباشرة مع Sami طوال فترة الـ 60 يوماً',
+    ],
     paymentMethods: DEFAULT_PAYMENT_METHODS,
     allowsInstallments: true,
     installmentMinimum: 100,
@@ -300,8 +331,8 @@ export const DEFAULT_SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       },
     ],
     termsVersion: 1,
-    paymentInstructions: 'يرجى مراجعة Sami في الخاص لتأكيد توفر المقعد ورقم المعاملة الخاص بالاشتراك.',
-    ownerNotes: 'رحلة كبار المتداولين بهدف تنمية رأس المال إلى 10,000$.',
+    paymentInstructions: 'يرجى مراجعة Sami في الخاص لتأكيد توفر المقعد ورقم المعاملة الخاص بالاشتراك قبل إجراء التحويل.',
+    ownerNotes: 'رحلة كبار المتداولين المحترفين بهدف تنمية رأس المال إلى 10,000$ بأعلى معايير الانضباط.',
     publishedAt: Date.now(),
     updatedAt: Date.now(),
     updatedBy: 1,
@@ -313,11 +344,21 @@ export const DEFAULT_SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     currency: '$',
     shortDescription: 'القناة الخاصة الحصرية للنخبة مع توصيات يومية حية وتحليلات مباشرة وشروط انضباط صارمة.',
     fullDescription: 'قناة Sami VIP توفر صفقات استثنائية بدقة عالية ومتابعة لحظية مع Sami شخصياً. مقاعد محدودة أسبوعياً (10 مشتركين فقط) لضمان جودة المتابعة الفردية والانضباط التام.',
+    depositNetwork: 'BNB Smart Chain (BEP20)',
+    walletAddress: '0x1A2B3C4D5E6F7890123456789ABCDEF012345678',
+    walletLink: 'https://bscscan.com/token/0x55d398326f99059ff775485246999027b3197955?a=0x1A2B3C4D5E6F7890123456789ABCDEF012345678',
+    features: [
+      'القناة الملكية الحصرية لنخبة المتداولين مع Sami شخصياً',
+      'توصيات خاصة بأعلى درجات الدقة والفرص المكتملة الشروط فقط',
+      'متابعة فردية وتأمين الصفقات فور تحقيق ربح +10$',
+      'الحد الأقصى 10 مشتركين أسبوعياً لضمان التركيز والخصوصية التامة',
+      'وثيقة الشروط الـ 16 الإلزامية لضمان الانضباط وحماية رأس المال',
+    ],
     paymentMethods: DEFAULT_PAYMENT_METHODS,
     allowsInstallments: false,
     installmentMinimum: 200,
-    durationDays: 7, // 7 days base duration as requested
-    maxSubscribers: 10, // 10 subscribers weekly as requested
+    durationDays: 7,
+    maxSubscribers: 10,
     enrolledCount: 7,
     isActive: true,
     status: 'active',
@@ -325,8 +366,8 @@ export const DEFAULT_SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     termsTitle: 'شروط وأحكام الانضمام لقناة Sami VIP',
     termsItems: INITIAL_SAMI_VIP_TERMS,
     termsVersion: 1,
-    paymentInstructions: 'الدفع الكامل مقدماً بقيمة 200$ أسبوعياً عبر USDT BEP20 أو بينانس باي. لا يتم التفعيل إلا بعد الموافقة على الشروط.',
-    ownerNotes: 'القناة الأهم والأكثر طلباً؛ تخضع للرقابة الصارمة وشروط الالتزام الـ 16.',
+    paymentInstructions: 'الدفع الكامل مقدماً بقيمة 200$ أسبوعياً عبر USDT BEP20 أو بينانس باي. لا يتم تفعيل القناة إلا بعد الموافقة الرسمية على وثيقة الشروط الـ 16.',
+    ownerNotes: 'القناة الأهم والأعلى قيمة؛ تخضع للرقابة الصارمة وشروط الالتزام الـ 16 لحماية رأس المال.',
     publishedAt: Date.now(),
     updatedAt: Date.now(),
     updatedBy: 1,
@@ -338,6 +379,15 @@ export const DEFAULT_SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     currency: '$',
     shortDescription: 'صفقات سريعة وخاطفة على الفريمات الزمنية الصغيرة بدقة عالية وسرعة في جني الأرباح.',
     fullDescription: 'قناة مخصصة لعشاق التداول اللحظي السريع (Scalping) على العملات والمؤشرات والذهب. توصيات سريعة بنقاط دخول وخروج واضحة ومحددة تناسب أوقات السيولة المرتفعة.',
+    depositNetwork: 'Tron (USDT TRC20)',
+    walletAddress: 'TYAS89kLmnPqRstUvwXyz1234567890ABC',
+    walletLink: 'https://tronscan.org/#/address/TYAS89kLmnPqRstUvwXyz1234567890ABC',
+    features: [
+      'صفقات خاطفة وسريعة على فريمات الدقيقة و 5 دقائق',
+      'نقاط دخول وخروج محددة بالمللي لاقتناص قمم وقيعان السيولة',
+      'أوامر وقف خسارة ضيقة جداً للحد من أي ارتداد مفاجئ',
+      'إشارات مكثفة خلال فترات افتتاح بورصة لندن وبورصة نيويورك',
+    ],
     paymentMethods: DEFAULT_PAYMENT_METHODS,
     allowsInstallments: false,
     installmentMinimum: 180,
@@ -365,15 +415,15 @@ export const DEFAULT_SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       },
     ],
     termsVersion: 1,
-    paymentInstructions: 'التحويل عبر USDT ثم إرسال المعاملة إلى Sami للتحقق وإضافتك للقناة فوراً.',
-    ownerNotes: 'صفقات ذات أهداف سريعة وأوامر وقف دقيقة جداً.',
+    paymentInstructions: 'التحويل عبر USDT (TRC20 أو BEP20) ثم إرسال المعاملة إلى Sami للتحقق وإضافتك للقناة فوراً.',
+    ownerNotes: 'صفقات ذات أهداف سريعة وأوامر وقف دقيقة جداً؛ تتطلب سرعة في إدخال الأوامر عبر المنصة.',
     publishedAt: Date.now(),
     updatedAt: Date.now(),
     updatedBy: 1,
   },
 ];
 
-// Helper to safely parse plan documents
+// Helper to safely parse plan documents with all fields
 function parseSubscriptionPlanDoc(data: Record<string, unknown>, id: string): SubscriptionPlan {
   const fallback = DEFAULT_SUBSCRIPTION_PLANS.find((p) => p.id === id) || DEFAULT_SUBSCRIPTION_PLANS[0];
   return {
@@ -383,8 +433,34 @@ function parseSubscriptionPlanDoc(data: Record<string, unknown>, id: string): Su
     currency: String(data.currency || fallback.currency),
     shortDescription: String(data.shortDescription || fallback.shortDescription),
     fullDescription: String(data.fullDescription || fallback.fullDescription),
+    imageUrl: typeof data.imageUrl === 'string' && data.imageUrl ? data.imageUrl : fallback.imageUrl,
+    walletAddress:
+      typeof data.walletAddress === 'string' && data.walletAddress
+        ? data.walletAddress
+        : fallback.walletAddress,
+    walletLink:
+      typeof data.walletLink === 'string' && data.walletLink
+        ? data.walletLink
+        : fallback.walletLink,
+    depositNetwork:
+      typeof data.depositNetwork === 'string' && data.depositNetwork
+        ? data.depositNetwork
+        : fallback.depositNetwork,
+    features: Array.isArray(data.features) && data.features.length > 0
+      ? (data.features as string[])
+      : fallback.features,
     paymentMethods: Array.isArray(data.paymentMethods)
-      ? (data.paymentMethods as PaymentMethodItem[])
+      ? (data.paymentMethods as PaymentMethodItem[]).map((m, idx) => ({
+          id: String(m.id || `pm_${idx}`),
+          name: String(m.name || 'طريقة دفع'),
+          type: (m.type as PaymentMethodItem['type']) || 'crypto',
+          network: typeof m.network === 'string' ? m.network : undefined,
+          addressOrDetails: typeof m.addressOrDetails === 'string' ? m.addressOrDetails : undefined,
+          linkUrl: typeof m.linkUrl === 'string' ? m.linkUrl : undefined,
+          instructions: typeof m.instructions === 'string' ? m.instructions : undefined,
+          qrCodeUrl: typeof m.qrCodeUrl === 'string' ? m.qrCodeUrl : undefined,
+          isEnabled: typeof m.isEnabled === 'boolean' ? m.isEnabled : true,
+        }))
       : fallback.paymentMethods,
     allowsInstallments:
       typeof data.allowsInstallments === 'boolean'
@@ -417,11 +493,13 @@ function parseSubscriptionPlanDoc(data: Record<string, unknown>, id: string): Su
     termsVersion:
       typeof data.termsVersion === 'number' ? data.termsVersion : fallback.termsVersion,
     paymentInstructions:
-      typeof data.paymentInstructions === 'string'
+      typeof data.paymentInstructions === 'string' && data.paymentInstructions
         ? data.paymentInstructions
         : fallback.paymentInstructions,
     ownerNotes:
-      typeof data.ownerNotes === 'string' ? data.ownerNotes : fallback.ownerNotes,
+      typeof data.ownerNotes === 'string' && data.ownerNotes
+        ? data.ownerNotes
+        : fallback.ownerNotes,
     publishedAt:
       typeof data.publishedAt === 'number' ? data.publishedAt : fallback.publishedAt,
     updatedAt:
@@ -492,15 +570,27 @@ export function subscribeToSubscriptionPlans(
             map.set(parsed.id, parsed);
           });
 
-          const sorted = DEFAULT_SUBSCRIPTION_PLANS.map((def) => map.get(def.id) || def);
-          memoryCachedPlans = sorted;
+          // Preserve default plans order first, then append any custom plans added to Firestore
+          const allPlans: SubscriptionPlan[] = [];
+          const processedIds = new Set<string>();
+          for (const def of DEFAULT_SUBSCRIPTION_PLANS) {
+            allPlans.push(map.get(def.id) || def);
+            processedIds.add(def.id);
+          }
+          map.forEach((plan, planId) => {
+            if (!processedIds.has(planId)) {
+              allPlans.push(plan);
+            }
+          });
+
+          memoryCachedPlans = allPlans;
           try {
-            localStorage.setItem(LOCAL_PLANS_CACHE_KEY, JSON.stringify(sorted));
+            localStorage.setItem(LOCAL_PLANS_CACHE_KEY, JSON.stringify(allPlans));
           } catch {
             // Ignore
           }
 
-          plansSubscribers.forEach((cb) => cb(sorted));
+          plansSubscribers.forEach((cb) => cb(allPlans));
         },
         (error) => {
           console.warn('Subscription plans listener fallback:', error);
@@ -561,11 +651,26 @@ export async function saveSubscriptionPlan(
     updatedBy: 1,
   };
 
-  // 1. Save plan to Firestore
+  // 1. Instantly update in-memory cache and localStorage for 0ms UI responsiveness
+  if (memoryCachedPlans) {
+    const nextList = memoryCachedPlans.map((p) => (p.id === updatedPlan.id ? updatedPlan : p));
+    if (!nextList.some((p) => p.id === updatedPlan.id)) {
+      nextList.push(updatedPlan);
+    }
+    memoryCachedPlans = nextList;
+    try {
+      localStorage.setItem(LOCAL_PLANS_CACHE_KEY, JSON.stringify(nextList));
+    } catch {
+      // Ignore
+    }
+    plansSubscribers.forEach((cb) => cb(nextList));
+  }
+
+  // 2. Save plan to Firestore
   const planDocRef = doc(db, PLANS_COLLECTION, plan.id);
   await setDoc(planDocRef, updatedPlan, { merge: true });
 
-  // 2. Add audit log
+  // 3. Add audit log
   try {
     const auditLogId = `audit_${plan.id}_${now}_${Math.random().toString(36).substring(2, 6)}`;
     const auditRef = doc(db, AUDIT_LOGS_COLLECTION, auditLogId);
@@ -584,6 +689,9 @@ export async function saveSubscriptionPlan(
         durationDays: updatedPlan.durationDays,
         maxSubscribers: updatedPlan.maxSubscribers,
         termsVersion: updatedPlan.termsVersion,
+        walletAddress: updatedPlan.walletAddress,
+        depositNetwork: updatedPlan.depositNetwork,
+        walletLink: updatedPlan.walletLink,
       },
       changedBy: 1,
       changedByName: ownerUser.displayName || 'Sami',
@@ -667,6 +775,34 @@ export function subscribeToSubscriptionAuditLogs(
   }
 }
 
+// In-memory cache for ultra-fast instant 0ms user consent lookups
+const consentsMemoryCache = new Map<string, SubscriptionConsent>();
+
+function getLocalConsentsMap(): Record<string, SubscriptionConsent> {
+  try {
+    const raw = localStorage.getItem(LOCAL_CONSENTS_CACHE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function getCachedUserConsent(
+  userId: number,
+  subscriptionId: string
+): SubscriptionConsent | null {
+  const consentId = `consent_${userId}_${subscriptionId}`;
+  if (consentsMemoryCache.has(consentId)) {
+    return consentsMemoryCache.get(consentId)!;
+  }
+  const localMap = getLocalConsentsMap();
+  if (localMap[consentId]) {
+    consentsMemoryCache.set(consentId, localMap[consentId]);
+    return localMap[consentId];
+  }
+  return null;
+}
+
 /**
  * Records user consent to a specific terms version.
  */
@@ -679,7 +815,6 @@ export async function recordUserConsent(consent: {
 }): Promise<void> {
   const now = Date.now();
   const consentId = `consent_${consent.userId}_${consent.subscriptionId}`;
-  const ref = doc(db, CONSENTS_COLLECTION, consentId);
   const data: SubscriptionConsent = {
     id: consentId,
     userId: consent.userId,
@@ -691,22 +826,39 @@ export async function recordUserConsent(consent: {
     timestamp: now,
     status: 'active',
   };
+
+  // Instant synchronous cache
+  consentsMemoryCache.set(consentId, data);
+  try {
+    const localMap = getLocalConsentsMap();
+    localMap[consentId] = data;
+    localStorage.setItem(LOCAL_CONSENTS_CACHE_KEY, JSON.stringify(localMap));
+  } catch {
+    // Ignore
+  }
+
+  // Cloud persist
+  const ref = doc(db, CONSENTS_COLLECTION, consentId);
   await setDoc(ref, data, { merge: true });
 }
 
 /**
  * Retrieves the recorded user consent for a specific subscription.
+ * Returns cached consent immediately to avoid modal opening delays,
+ * and refreshes in background if needed.
  */
 export async function getUserConsent(
   userId: number,
   subscriptionId: string
 ): Promise<SubscriptionConsent | null> {
+  const cached = getCachedUserConsent(userId, subscriptionId);
+  const consentId = `consent_${userId}_${subscriptionId}`;
+
   try {
-    const consentId = `consent_${userId}_${subscriptionId}`;
     const snap = await getDoc(doc(db, CONSENTS_COLLECTION, consentId));
     if (snap.exists()) {
       const data = snap.data();
-      return {
+      const consentItem: SubscriptionConsent = {
         id: consentId,
         userId: Number(data.userId),
         userName: String(data.userName || ''),
@@ -717,11 +869,111 @@ export async function getUserConsent(
         timestamp: Number(data.timestamp || Date.now()),
         status: (data.status as 'active' | 'superseded') || 'active',
       };
+      consentsMemoryCache.set(consentId, consentItem);
+      try {
+        const localMap = getLocalConsentsMap();
+        localMap[consentId] = consentItem;
+        localStorage.setItem(LOCAL_CONSENTS_CACHE_KEY, JSON.stringify(localMap));
+      } catch {
+        // Ignore
+      }
+      return consentItem;
     }
   } catch (err) {
     console.warn('Failed to fetch user consent:', err);
   }
-  return null;
+  return cached;
+}
+
+/**
+ * Resolves effective wallet details for a plan (combines plan-level & selected payment method).
+ */
+export function getEffectiveWalletInfo(
+  plan: SubscriptionPlan,
+  selectedMethodId?: string
+): {
+  address: string;
+  network: string;
+  linkUrl: string;
+  instructions: string;
+  methodName: string;
+  type: string;
+} {
+  const activeMethods = plan.paymentMethods.filter((m) => m.isEnabled);
+  const matchedMethod =
+    activeMethods.find((m) => m.id === selectedMethodId) ||
+    activeMethods[0] ||
+    plan.paymentMethods[0];
+
+  const address =
+    matchedMethod?.addressOrDetails ||
+    plan.walletAddress ||
+    '';
+
+  const network =
+    matchedMethod?.network ||
+    plan.depositNetwork ||
+    (matchedMethod?.type === 'crypto' ? 'Tron (USDT TRC20)' : 'حوالة معتمدة');
+
+  const linkUrl =
+    matchedMethod?.linkUrl ||
+    plan.walletLink ||
+    '';
+
+  const instructions = [
+    plan.paymentInstructions,
+    matchedMethod?.instructions,
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+
+  return {
+    address,
+    network,
+    linkUrl,
+    instructions,
+    methodName: matchedMethod?.name || 'طريقة الدفع المعتمدة',
+    type: matchedMethod?.type || 'crypto',
+  };
+}
+
+/**
+ * Formats a clean Arabic copy text with all payment and transfer details.
+ */
+export function formatAllPaymentDetails(
+  plan: SubscriptionPlan,
+  selectedMethodId?: string,
+  isInstallment = false
+): string {
+  const info = getEffectiveWalletInfo(plan, selectedMethodId);
+  const priceDisplay = `${plan.price} ${plan.currency}`;
+  const amountToPay = isInstallment
+    ? `${plan.installmentMinimum} ${plan.currency} (الدفعة الأولى)`
+    : priceDisplay;
+
+  const lines = [
+    `📋 بيانات الدفع والتحويل لاشتراك [${plan.name}]:`,
+    `----------------------------------------`,
+    `• اسم الباقة: ${plan.name}`,
+    `• المبلغ المطلوب: ${amountToPay}`,
+    `• طريقة الدفع المحددة: ${info.methodName}`,
+    `• شبكة التحويل / الإيداع: ${info.network}`,
+  ];
+
+  if (info.address) {
+    lines.push(`• عنوان المحفظة / الحساب: ${info.address}`);
+  }
+  if (info.linkUrl) {
+    lines.push(`• رابط المحفظة / الدفع: ${info.linkUrl}`);
+  }
+  if (info.instructions) {
+    lines.push(`• تعليمات التحويل: ${info.instructions}`);
+  }
+
+  lines.push(`----------------------------------------`);
+  lines.push(`يرجى تحويل المبلغ بدقة ثم إرسال لقطة الشاشة مع المعاملة في الخاص مع Sami لتأكيد الاشتراك فوراً.`);
+
+  return lines.join('\n');
 }
 
 /**
@@ -730,29 +982,27 @@ export async function getUserConsent(
  */
 export function generateInquiryMessage(
   plan: SubscriptionPlan,
-  isInstallment = false
+  isInstallment = false,
+  selectedMethodId?: string
 ): string {
+  const info = getEffectiveWalletInfo(plan, selectedMethodId);
   const priceDisplay = `${plan.price} ${plan.currency}`;
   const durationDisplay =
     plan.durationDays > 0 ? `${plan.durationDays} يوم` : 'اشتراك مستمر';
   const installmentText = isInstallment
-    ? `\n• نظام الدفع: بنظام الدفعات (الحد الأدنى للدفعة: ${plan.installmentMinimum} ${plan.currency})`
-    : `\n• نظام الدفع: دفع كامل (${priceDisplay})`;
+    ? `\n• نظام الدفع المطلوب: بنظام الدفعات (الحد الأدنى للدفعة: ${plan.installmentMinimum} ${plan.currency})`
+    : `\n• نظام الدفع المطلوب: دفع كامل (${priceDisplay})`;
 
   return `مرحباً كابتن Sami 👑
 
 أرغب بالاستفسار والاشتراك في:
 💎 ${plan.name}
 
-تفاصيل الاشتراك الحالية:
+تفاصيل الاشتراك:
 • السعر المعتمد: ${priceDisplay}
 • مدة الاشتراك: ${durationDisplay}${installmentText}
+• طريقة الدفع المختارة: ${info.methodName} (${info.network})
+${info.address ? `• عنوان المحفظة المحدد: ${info.address}` : ''}
 
-طرق الدفع المتوفرة:
-${plan.paymentMethods
-  .filter((m) => m.isEnabled)
-  .map((m) => `• ${m.name}`)
-  .join('\n')}
-
-يرجى تزويدي ببيانات المحفظة/التحويل لتأكيد الاشتراك وتفعيل القناة. شكراً جزيلاً!`;
+يرجى تأكيد المقعد وتزويدي بأي توجيهات إضافية لتفعيل الاشتراك. شكراً لك!`;
 }

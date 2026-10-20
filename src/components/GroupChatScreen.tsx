@@ -21,6 +21,8 @@ import {
   Trash2,
   Reply,
   Copy,
+  ChevronLeft,
+  Crown,
 } from 'lucide-react';
 import {
   CommunityChannel,
@@ -164,6 +166,10 @@ export const GroupChatScreen: React.FC<GroupChatScreenProps> = ({
   useEffect(() => {
     const unsub = subscribeToSubscriptionPlans((plans) => {
       setSubscriptionPlans(plans);
+      setViewingSubscriptionPlan((prev) => {
+        if (!prev) return null;
+        return plans.find((p) => p.id === prev.id) || prev;
+      });
     });
     return () => unsub();
   }, []);
@@ -820,6 +826,14 @@ export const GroupChatScreen: React.FC<GroupChatScreenProps> = ({
                     onClick={() => setViewingSubscriptionPlan(sub)}
                     className="p-3 rounded-2xl bg-[#090f1d]/90 hover:bg-[#0e162a] border border-amber-500/20 hover:border-amber-400/50 transition cursor-pointer flex items-center justify-between gap-2.5 group"
                   >
+                    {sub.imageUrl && (
+                      <img
+                        src={sub.imageUrl}
+                        alt={sub.name}
+                        className="w-10 h-10 rounded-xl object-cover border border-amber-400/40 shrink-0"
+                      />
+                    )}
+
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs font-black text-white group-hover:text-amber-300 transition truncate">
@@ -854,16 +868,12 @@ export const GroupChatScreen: React.FC<GroupChatScreenProps> = ({
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (currentUser.isGuest) {
-                          onRequestPackageSupport?.(sub);
-                        } else {
-                          setViewingSubscriptionPlan(sub);
-                        }
+                        setViewingSubscriptionPlan(sub);
                       }}
-                      className="px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-[10.5px] font-bold shrink-0 flex items-center gap-1 group-hover:scale-105 transition"
+                      className="px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-[10.5px] font-bold shrink-0 flex items-center gap-1 group-hover:scale-105 transition cursor-pointer"
                     >
-                      <span>{currentUser.isGuest ? 'المزيد من المعلومات 💬' : 'التفاصيل'}</span>
-                      <span className="material-symbols-rounded text-[14px]">chevron_left</span>
+                      <span>التفاصيل الكاملة</span>
+                      <ChevronLeft className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 );
