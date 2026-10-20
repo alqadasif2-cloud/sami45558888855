@@ -1,0 +1,16 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+.gradle/
+app/build/
+*.apk
+release_apk/
+build_output_apks/
+bun.lock
+bun.lockb
+

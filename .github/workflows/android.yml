@@ -1,0 +1,124 @@
+name: Build Sami Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - '**'
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-android-apk:
+    name: Build & Package Sami Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 1. Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 2. Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 3. Install Web dependencies
+        run: |
+          echo "Installing dependencies..."
+          npm install --legacy-peer-deps
+
+      - name: 4. Build Web App & Update Android Assets
+        run: |
+          echo "Building production Web application..."
+          npm run build
+          echo "Syncing built bundle into Android assets..."
+          mkdir -p app/src/main/assets/assets
+          cp -r dist/* app/src/main/assets/
+          ls -la app/src/main/assets/
+
+      - name: 5. Set up Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: 6. Grant execute permissions for Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: 7. Verify Signing Keystore
+        run: |
+          echo "Validating keystore..."
+          if [ -f app/sami-signing-key.p12 ]; then
+            echo "Universal signing key found at app/sami-signing-key.p12."
+            keytool -list -keystore app/sami-signing-key.p12 -storepass samitrading -storetype PKCS12 || echo "Keystore listed"
+          else
+            echo "Generating new signing keystore..."
+            keytool -genkeypair -v \
+              -keystore app/sami-signing-key.p12 \
+              -storetype PKCS12 \
+              -storepass samitrading \
+              -keypass samitrading \
+              -alias sami \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Sami Trading Challenge, OU=Mobile, O=Sami, L=Riyadh, ST=Riyadh, C=SA"
+          fi
+
+      - name: 8. Build Universal Signed APKs with Gradle
+        run: |
+          ./gradlew assembleRelease assembleDebug --no-daemon --stacktrace
+
+      - name: 9. Verify Generated APKs and Prepare Deliverables
+        run: |
+          mkdir -p build_output_apks
+
+          if [ -f app/build/outputs/apk/release/app-release.apk ]; then
+            RELEASE_SIZE=$(stat -c%s "app/build/outputs/apk/release/app-release.apk" 2>/dev/null || stat -f%z "app/build/outputs/apk/release/app-release.apk")
+            echo "Release APK size: $RELEASE_SIZE bytes"
+            if [ "$RELEASE_SIZE" -gt 1000000 ]; then
+              cp app/build/outputs/apk/release/app-release.apk build_output_apks/Sami-TradingChallenge-v1.3.0-Release.apk
+              cp app/build/outputs/apk/release/app-release.apk build_output_apks/Sami-TradingChallenge-Installable.apk
+              echo "Release APK verified and staged."
+            else
+              echo "::error::Release APK file exists but is suspiciously small ($RELEASE_SIZE bytes)."
+              exit 1
+            fi
+          fi
+
+          if [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
+            DEBUG_SIZE=$(stat -c%s "app/build/outputs/apk/debug/app-debug.apk" 2>/dev/null || stat -f%z "app/build/outputs/apk/debug/app-debug.apk")
+            echo "Debug APK size: $DEBUG_SIZE bytes"
+            if [ "$DEBUG_SIZE" -gt 1000000 ]; then
+              cp app/build/outputs/apk/debug/app-debug.apk build_output_apks/Sami-TradingChallenge-v1.3.0-Debug.apk
+              echo "Debug APK verified and staged."
+            fi
+          fi
+
+          TOTAL_APKS=$(ls -1 build_output_apks/*.apk 2>/dev/null | wc -l)
+          if [ "$TOTAL_APKS" -eq 0 ]; then
+            echo "::error::No valid APKs were produced by the Gradle build!"
+            exit 1
+          fi
+
+          echo "=========================================="
+          echo "SUCCESS: Staged APK files for artifact upload:"
+          ls -lh build_output_apks/
+          echo "=========================================="
+
+      - name: 10. Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sami-Android-APK
+          path: build_output_apks/*.apk
+          if-no-files-found: error
+          retention-days: 30
